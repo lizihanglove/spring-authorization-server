@@ -16,6 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
         <mariadb.version>3.0.10</mariadb.version>
+        <spring-security.version>5.8.2</spring-security.version>
     </properties>
     <dependencies>
         <dependency>
@@ -37,11 +38,16 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-authorization-server</artifactId>
-            <version>0.2.3</version>
+            <version>0.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>8.19</version>
         </dependency>
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>

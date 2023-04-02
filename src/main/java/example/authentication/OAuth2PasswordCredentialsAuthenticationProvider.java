@@ -20,7 +20,6 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.OAuth2Token;
-import org.springframework.security.oauth2.core.OAuth2TokenType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -28,12 +27,13 @@ import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.OAuth2TokenContext;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.context.ProviderContextHolder;
+import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContextHolder;
 import org.springframework.security.oauth2.server.authorization.token.DefaultOAuth2TokenContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -114,7 +114,7 @@ public class OAuth2PasswordCredentialsAuthenticationProvider implements Authenti
         OAuth2TokenContext tokenContext = DefaultOAuth2TokenContext.builder()
                 .registeredClient(registeredClient)
                 .principal(new UsernamePasswordAuthenticationToken(user,password))
-                .providerContext(ProviderContextHolder.getProviderContext())
+                .authorizationServerContext(AuthorizationServerContextHolder.getContext())
                 .authorizedScopes(authorizedScopes)
                 .tokenType(OAuth2TokenType.ACCESS_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.PASSWORD)
@@ -136,7 +136,7 @@ public class OAuth2PasswordCredentialsAuthenticationProvider implements Authenti
         OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
                 .principalName(username)
                 .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes);
+                .authorizedScopes(authorizedScopes);
         // @formatter:on
         if (generatedAccessToken instanceof ClaimAccessor) {
             authorizationBuilder.token(accessToken, (metadata) ->
@@ -154,7 +154,7 @@ public class OAuth2PasswordCredentialsAuthenticationProvider implements Authenti
             OAuth2TokenContext refreshTokenContext = DefaultOAuth2TokenContext.builder()
                     .registeredClient(registeredClient)
                     .principal(new UsernamePasswordAuthenticationToken(username,password))
-                    .providerContext(ProviderContextHolder.getProviderContext())
+                    .authorizationServerContext(AuthorizationServerContextHolder.getContext())
                     .authorizedScopes(authorizedScopes)
                     .tokenType(OAuth2TokenType.REFRESH_TOKEN)
                     .authorizationGrantType(AuthorizationGrantType.PASSWORD)
@@ -177,7 +177,7 @@ public class OAuth2PasswordCredentialsAuthenticationProvider implements Authenti
             OAuth2TokenContext idTokenContext = DefaultOAuth2TokenContext.builder()
                     .registeredClient(registeredClient)
                     .principal(new UsernamePasswordAuthenticationToken(username,password))
-                    .providerContext(ProviderContextHolder.getProviderContext())
+                    .authorizationServerContext(AuthorizationServerContextHolder.getContext())
                     .authorizedScopes(authorizedScopes)
                     .tokenType(ID_TOKEN_TOKEN_TYPE)
                     .authorizationGrantType(AuthorizationGrantType.PASSWORD)

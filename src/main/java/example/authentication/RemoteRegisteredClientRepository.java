@@ -12,20 +12,18 @@ import example.entity.OAuth2ClientAuthorizationScope;
 import example.entity.OAuth2ClientRedirectUri;
 import example.entity.OAuth2ClientSetting;
 import example.service.OAuth2ClientDetailService;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.OAuth2TokenFormat;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient.Builder;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.config.ConfigurationSettingNames;
-import org.springframework.security.oauth2.server.authorization.config.ConfigurationSettingNames.Token;
-import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.ConfigurationSettingNames;
+import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -204,12 +202,14 @@ public class RemoteRegisteredClientRepository implements RegisteredClientReposit
         JwsAlgorithmTypeHandler jwsAlgorithmTypeHandler = new JwsAlgorithmTypeHandler();
 
         typeHandlerRegistry.regist(ConfigurationSettingNames.Token.REUSE_REFRESH_TOKENS,booleanTypeHandler);
+        typeHandlerRegistry.regist(ConfigurationSettingNames.Token.AUTHORIZATION_CODE_TIME_TO_LIVE,durationTypeHandler);
         typeHandlerRegistry.regist(ConfigurationSettingNames.Token.ACCESS_TOKEN_TIME_TO_LIVE,durationTypeHandler);
         typeHandlerRegistry.regist(ConfigurationSettingNames.Token.REFRESH_TOKEN_TIME_TO_LIVE,durationTypeHandler);
         typeHandlerRegistry.regist(ConfigurationSettingNames.Token.ID_TOKEN_SIGNATURE_ALGORITHM,signatureAlgorithmTypeHandler);
-        typeHandlerRegistry.regist(Token.ACCESS_TOKEN_FORMAT,new OAuth2TokenFormatTypeHandler());
+        typeHandlerRegistry.regist(ConfigurationSettingNames.Token.ACCESS_TOKEN_FORMAT,new OAuth2TokenFormatTypeHandler());
 
         typeHandlerRegistry.regist(ConfigurationSettingNames.Client.REQUIRE_PROOF_KEY,booleanTypeHandler);
+        typeHandlerRegistry.regist(ConfigurationSettingNames.Client.REQUIRE_AUTHORIZATION_CONSENT,booleanTypeHandler);
         typeHandlerRegistry.regist(ConfigurationSettingNames.Client.REQUIRE_AUTHORIZATION_CONSENT,booleanTypeHandler);
         typeHandlerRegistry.regist(ConfigurationSettingNames.Client.TOKEN_ENDPOINT_AUTHENTICATION_SIGNING_ALGORITHM,jwsAlgorithmTypeHandler);
     }

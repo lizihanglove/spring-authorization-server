@@ -26,7 +26,7 @@ import java.util.List;
 
 class AuthorizationTest {
     private HttpClient httpClient = HttpClients.createDefault();
-    private static final String ENDPOINT = "http://localhost:8080";
+    private static final String ENDPOINT = "http://127.0.0.1:8080";
     private static final String TOKEN_ENDPOINT = ENDPOINT+"/oauth2/token";
     private static final String REVOKE_TOKEN_ENDPOINT =ENDPOINT +"/oauth2/revoke";
     private Gson gson = new Gson();
