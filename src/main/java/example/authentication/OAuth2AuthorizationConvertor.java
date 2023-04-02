@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import example.entity.OAuth2Authorization;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.AbstractOAuth2Token;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -34,19 +36,21 @@ import java.util.Set;
 
 @Component
 public class OAuth2AuthorizationConvertor {
+    Logger logger = LoggerFactory.getLogger(OAuth2AuthorizationConvertor.class);
     private static final ZoneOffset ZONE_OFFSET = ZoneOffset.ofHours(8);
     private ObjectMapper objectMapper = new ObjectMapper();
     @Resource
     private RegisteredClientRepository registeredClientRepository;
-    public OAuth2AuthorizationConvertor(){
+
+    public OAuth2AuthorizationConvertor() {
         ClassLoader classLoader = JdbcOAuth2AuthorizationService.class.getClassLoader();
         List<Module> securityModules = SecurityJackson2Modules.getModules(classLoader);
         this.objectMapper.registerModules(securityModules);
         this.objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
     }
 
-    public OAuth2Authorization from(org.springframework.security.oauth2.server.authorization.OAuth2Authorization authorization){
-        if(authorization == null){
+    public OAuth2Authorization from(org.springframework.security.oauth2.server.authorization.OAuth2Authorization authorization) {
+        if (authorization == null) {
             return null;
         }
 
@@ -57,21 +61,21 @@ public class OAuth2AuthorizationConvertor {
         result.setAuthorizationGrantType(authorization.getAuthorizationGrantType().getValue());
         result.setState(authorization.getAttribute(OAuth2ParameterNames.STATE));
 
-        Optional.ofNullable(toTokenInfo(authorization.getToken(OAuth2AuthorizationCode.class))).ifPresent(token ->{
-            result.setAuthorizationCodeValue(token.getTokenValue() );
+        Optional.ofNullable(toTokenInfo(authorization.getToken(OAuth2AuthorizationCode.class))).ifPresent(token -> {
+            result.setAuthorizationCodeValue(token.getTokenValue());
             result.setAuthorizationCodeExpiresAt(token.getTokenExpiresAt().toLocalDateTime());
             result.setAuthorizationCodeIssuedAt(token.getTokenIssuedAt().toLocalDateTime());
             result.setAuthorizationCodeMetadata(token.getMetadata());
         });
 
-        Optional.ofNullable(toTokenInfo(authorization.getToken(OAuth2AccessToken.class))).ifPresent(token ->{
+        Optional.ofNullable(toTokenInfo(authorization.getToken(OAuth2AccessToken.class))).ifPresent(token -> {
             result.setAccessTokenMetadata(token.getMetadata());
             result.setAccessTokenValue(token.getTokenValue());
             result.setAccessTokenIssuedAt(token.getTokenIssuedAt().toLocalDateTime());
             result.setAccessTokenExpiresAt(token.getTokenExpiresAt().toLocalDateTime());
         });
 
-        Optional.ofNullable(authorization.getToken(OAuth2AccessToken.class)).ifPresent(accessToken ->{
+        Optional.ofNullable(authorization.getToken(OAuth2AccessToken.class)).ifPresent(accessToken -> {
             String accessTokenType = accessToken.getToken().getTokenType().getValue();
             if (!CollectionUtils.isEmpty(accessToken.getToken().getScopes())) {
                 result.setAccessTokenScopes(StringUtils.collectionToDelimitedString(accessToken.getToken().getScopes(), ","));
@@ -79,14 +83,14 @@ public class OAuth2AuthorizationConvertor {
             result.setAccessTokenType(accessTokenType);
         });
 
-        Optional.ofNullable(toTokenInfo(authorization.getToken(OidcIdToken.class))).ifPresent(token ->{
+        Optional.ofNullable(toTokenInfo(authorization.getToken(OidcIdToken.class))).ifPresent(token -> {
             result.setOidcIdTokenValue(token.getTokenValue());
             result.setOidcIdTokenExpiresAt(token.getTokenExpiresAt().toLocalDateTime());
             result.setOidcIdTokenMetadata(token.getMetadata());
             result.setOidcIdTokenIssuedAt(token.getTokenIssuedAt().toLocalDateTime());
         });
 
-        Optional.ofNullable(toTokenInfo(authorization.getRefreshToken())).ifPresent(token ->{
+        Optional.ofNullable(toTokenInfo(authorization.getRefreshToken())).ifPresent(token -> {
             result.setRefreshTokenIssuedAt(token.getTokenIssuedAt().toLocalDateTime());
             result.setRefreshTokenMetadata(token.getMetadata());
             result.setRefreshTokenExpiresAt(token.getTokenExpiresAt().toLocalDateTime());
@@ -100,7 +104,7 @@ public class OAuth2AuthorizationConvertor {
 
 
     private <T extends AbstractOAuth2Token> TokenInfo toTokenInfo(org.springframework.security.oauth2.server.authorization.OAuth2Authorization.Token<T> token) {
-        if(token == null){
+        if (token == null) {
             return null;
         }
         String tokenValue = null;
@@ -129,15 +133,15 @@ public class OAuth2AuthorizationConvertor {
     }
 
     @Data
-    private static class TokenInfo{
+    private static class TokenInfo {
         private String tokenValue;
         private Timestamp tokenIssuedAt;
         private Timestamp tokenExpiresAt;
         private String metadata;
     }
 
-    public org.springframework.security.oauth2.server.authorization.OAuth2Authorization to(OAuth2Authorization oAuth2Authorization){
-        if(oAuth2Authorization == null){
+    public org.springframework.security.oauth2.server.authorization.OAuth2Authorization to(OAuth2Authorization oAuth2Authorization) {
+        if (oAuth2Authorization == null) {
             return null;
         }
 
@@ -149,8 +153,8 @@ public class OAuth2AuthorizationConvertor {
         Map<String, Object> attributes = parseMap(oAuth2Authorization.getAttributes());
         builder.attributes((attrs) -> attrs.putAll(attributes));
 
-        if(!Strings.isNullOrEmpty(oAuth2Authorization.getState())){
-            builder.attribute(OAuth2ParameterNames.STATE,oAuth2Authorization.getState());
+        if (!Strings.isNullOrEmpty(oAuth2Authorization.getState())) {
+            builder.attribute(OAuth2ParameterNames.STATE, oAuth2Authorization.getState());
         }
 
         Instant tokenIssuedAt;
@@ -223,8 +227,10 @@ public class OAuth2AuthorizationConvertor {
     }
 
     private Map<String, Object> parseMap(String data) {
+        logger.info("data:{}", data);
         try {
-            return this.objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {});
+            return this.objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {
+            });
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }

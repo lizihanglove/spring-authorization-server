@@ -1,12 +1,12 @@
 server:
-  port: 9000
+  port: 8080
 
 spring:
   datasource:
-    password: 111111
+    password: lizihang13579//
     username: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/oauth2
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/oauth2
   security:
     oauth2:
       client:

@@ -15,6 +15,7 @@
     <description>spring-authentication-server</description>
     <properties>
         <java.version>1.8</java.version>
+        <mariadb.version>3.0.10</mariadb.version>
     </properties>
     <dependencies>
         <dependency>
@@ -60,9 +61,11 @@
             <artifactId>jquery</artifactId>
             <version>3.6.0</version>
         </dependency>
+        <!-- mariadb-java-client -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>${mariadb.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

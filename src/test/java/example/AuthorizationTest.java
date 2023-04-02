@@ -26,7 +26,7 @@ import java.util.List;
 
 class AuthorizationTest {
     private HttpClient httpClient = HttpClients.createDefault();
-    private static final String ENDPOINT = "http://localhost:9000";
+    private static final String ENDPOINT = "http://localhost:8080";
     private static final String TOKEN_ENDPOINT = ENDPOINT+"/oauth2/token";
     private static final String REVOKE_TOKEN_ENDPOINT =ENDPOINT +"/oauth2/revoke";
     private Gson gson = new Gson();
@@ -60,7 +60,7 @@ class AuthorizationTest {
         params.add(new BasicNameValuePair(OAuth2ParameterNames.PASSWORD,"password"));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
         execute(httpPost);
-        //{"access_token":"eyJraWQiOiI5N2JiN2FiMC1jYTgxLTRjODgtYjFjYS01OTJiZGYyMjdiNzQiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImF1ZCI6Im1lc3NhZ2luZy1jbGllbnQiLCJuYmYiOjE2NDcyNzMyMzEsInNjb3BlIjpbIm9wZW5pZCIsIm1lc3NhZ2UucmVhZCIsIm1lc3NhZ2Uud3JpdGUiXSwiaXNzIjoiaHR0cDpcL1wvYXV0aC1zZXJ2ZXI6OTAwMCIsImV4cCI6MTY0NzI3MzUzMSwiaWF0IjoxNjQ3MjczMjMxfQ.fwT2VynDthPG-AlPeQaAD_5HusKkhmNLt23NNwZ25fSndnO2Wjw78RzGK3IZJFGfUJHhcKOU_q4gOjC8Uff0UpQ6GqaxY4ex2GGod09RNYqZPdQODJFTM_OBxsgjZdEExKJS6K-4qD-QDIMZ4JsgTnWu_ERjhMiS1OfSjx2q1jLNpelqDRl2pHvCZKsk8Ey1QaTKZeB_fck8AOrICD5DWPC7MnN2DTBac0dYc_3HOan2IW5DN2g7XkdgH8cvn0w_EN70HysC1-AHuV4Lu4rQL8ijpfEfEUejpQxlUeMCJkyBji5RnFaHlSrn07iewzyp43-egmzgoKmBaeh16SpACA","refresh_token":"BcWkO5Yu4UL1sk8JpUpABz0JnRjk7E-Vfik4smWlYjU9yWjqo6VVqyeUEHPwu5dm6h8MAi9YGR-m4i5GizzN9k_Kn73iLSfbuIl-247PU164pZl2mC1UFBZVdXYw2IKe","sub":"user1","aud":["messaging-client"],"scope":"openid message.read message.write","iss":"http://auth-server:9000","token_type":"Bearer","expires_in":300}
+        //{"access_token":"eyJraWQiOiI5N2JiN2FiMC1jYTgxLTRjODgtYjFjYS01OTJiZGYyMjdiNzQiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImF1ZCI6Im1lc3NhZ2luZy1jbGllbnQiLCJuYmYiOjE2NDcyNzMyMzEsInNjb3BlIjpbIm9wZW5pZCIsIm1lc3NhZ2UucmVhZCIsIm1lc3NhZ2Uud3JpdGUiXSwiaXNzIjoiaHR0cDpcL1wvYXV0aC1zZXJ2ZXI6OTAwMCIsImV4cCI6MTY0NzI3MzUzMSwiaWF0IjoxNjQ3MjczMjMxfQ.fwT2VynDthPG-AlPeQaAD_5HusKkhmNLt23NNwZ25fSndnO2Wjw78RzGK3IZJFGfUJHhcKOU_q4gOjC8Uff0UpQ6GqaxY4ex2GGod09RNYqZPdQODJFTM_OBxsgjZdEExKJS6K-4qD-QDIMZ4JsgTnWu_ERjhMiS1OfSjx2q1jLNpelqDRl2pHvCZKsk8Ey1QaTKZeB_fck8AOrICD5DWPC7MnN2DTBac0dYc_3HOan2IW5DN2g7XkdgH8cvn0w_EN70HysC1-AHuV4Lu4rQL8ijpfEfEUejpQxlUeMCJkyBji5RnFaHlSrn07iewzyp43-egmzgoKmBaeh16SpACA","refresh_token":"BcWkO5Yu4UL1sk8JpUpABz0JnRjk7E-Vfik4smWlYjU9yWjqo6VVqyeUEHPwu5dm6h8MAi9YGR-m4i5GizzN9k_Kn73iLSfbuIl-247PU164pZl2mC1UFBZVdXYw2IKe","sub":"user1","aud":["messaging-client"],"scope":"openid message.read message.write","iss":"http://auth-server:8080","token_type":"Bearer","expires_in":300}
     }
 
     @Test
@@ -100,7 +100,7 @@ class AuthorizationTest {
                 .queryParam(OAuth2ParameterNames.REDIRECT_URI, redirectUrl)
                 .toUriString();
         System.out.println(url);
-        //浏览器访问 http://localhost:9000/oauth2/authorize?response_type=code&client_id=messaging-client&state=some-state&scope=message.write&redirect_uri=http://www.baidu.com
+        //浏览器访问 http://localhost:8080/oauth2/authorize?response_type=code&client_id=messaging-client&state=some-state&scope=message.write&redirect_uri=http://www.baidu.com
         HttpPost httpPost = createHttpPost();
         List<NameValuePair> params = Lists.newArrayList();
         params.add(new BasicNameValuePair(OAuth2ParameterNames.GRANT_TYPE,"authorization_code"));
@@ -128,7 +128,7 @@ class AuthorizationTest {
                 .queryParam(PkceParameterNames.CODE_CHALLENGE_METHOD,"S256")
                 .toUriString();
         System.out.println(url);
-        //浏览器访问 http://localhost:9000/oauth2/authorize?response_type=code&client_id=messaging-client&state=some-state&scope=message.write&code_challenge_method=S256&code_challenge=23lwVh3xPX1ckZmTTzvoh6zY_L4gi2rvd4s9kKF9FQE&redirect_uri=http://www.baidu.com
+        //浏览器访问 http://localhost:8080/oauth2/authorize?response_type=code&client_id=messaging-client&state=some-state&scope=message.write&code_challenge_method=S256&code_challenge=23lwVh3xPX1ckZmTTzvoh6zY_L4gi2rvd4s9kKF9FQE&redirect_uri=http://www.baidu.com
         HttpPost httpPost = createHttpPost();
         List<NameValuePair> params = Lists.newArrayList();
         params.add(new BasicNameValuePair(OAuth2ParameterNames.GRANT_TYPE,"authorization_code"));
@@ -156,7 +156,7 @@ class AuthorizationTest {
                 .queryParam(PkceParameterNames.CODE_CHALLENGE_METHOD,"S256")
                 .toUriString();
         System.out.println(url);
-        //浏览器访问 http://localhost:9000/oauth2/authorize?response_type=code&client_id=messaging-client&state=some-state&scope=message.write&code_challenge_method=S256&code_challenge=23lwVh3xPX1ckZmTTzvoh6zY_L4gi2rvd4s9kKF9FQE&redirect_uri=http://www.baidu.com
+        //浏览器访问 http://localhost:8080/oauth2/authorize?response_type=code&client_id=messaging-client&state=some-state&scope=message.write&code_challenge_method=S256&code_challenge=23lwVh3xPX1ckZmTTzvoh6zY_L4gi2rvd4s9kKF9FQE&redirect_uri=http://www.baidu.com
 //        HttpPost httpPost = createHttpPost("messaging-client",null);
         HttpPost httpPost = new HttpPost(TOKEN_ENDPOINT);
         List<NameValuePair> params = Lists.newArrayList();
